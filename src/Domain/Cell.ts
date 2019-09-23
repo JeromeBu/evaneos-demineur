@@ -55,4 +55,8 @@ export class Cell {
         }
         return 'untouched';
     }
+
+    get hasMine() {
+        return this._bomb;
+    }
 }

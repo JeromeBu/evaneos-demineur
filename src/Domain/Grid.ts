@@ -72,4 +72,8 @@ export class Grid {
     get column() {
         return this._column;
     }
+
+    get cells() {
+        return this._cells;
+    }
 }
