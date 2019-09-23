@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --open",
-    "test": "jest --verbose"
+    "test": "jest --watch"
   },
   "author": "Antoine Lépée <antoine@evaneos.com>",
   "devDependencies": {
