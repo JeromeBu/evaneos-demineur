@@ -5,6 +5,7 @@ export class Cell {
     private _bomb: boolean;
     private _flagged: boolean;
     private _dug: boolean;
+    private _minesAround: number = 0;
 
     static withBomb(): Cell {
         return new Cell(true, false, false);
@@ -58,5 +59,13 @@ export class Cell {
 
     get hasMine() {
         return this._bomb;
+    }
+
+    get minesAround(): number {
+        return this._minesAround;
+    }
+
+    setMinesArounds(numberOfMinesAround: number) {
+        this._minesAround = numberOfMinesAround;
     }
 }

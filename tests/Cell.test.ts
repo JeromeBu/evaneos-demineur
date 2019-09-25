@@ -1,8 +1,12 @@
 import { Cell } from '../src/Domain/Cell';
+import { Grid } from '../src/Domain/Grid';
 
 describe(Cell, () => {
     describe('without a bomb', () => {
-        const cell = Cell.withoutBomb();
+        let cell: Cell;
+        beforeEach(() => {
+            cell = Cell.withoutBomb();
+        });
 
         test('does not explodes if untouched', () => {
             expect(cell.detonated).toBe(false);
@@ -18,12 +22,28 @@ describe(Cell, () => {
             expect(cell.detonated).toBe(false);
         });
 
-        test("can't be flagged if it has been dug", () => {
-            const dugCell = cell.dig();
+        describe('when cell has been dug', () => {
+            test("can't be flagged", () => {
+                const dugCell = cell.dig();
 
-            expect(() => {
-                dugCell.flag();
-            }).toThrowError();
+                expect(() => {
+                    dugCell.flag();
+                }).toThrowError();
+            });
+            test('mineArround is 1 if there is a mine around', () => {
+                const cellWithoutBomb = Cell.withoutBomb();
+                const cellWithBomb = Cell.withBomb();
+                const grid = new Grid(2, [
+                    cellWithoutBomb,
+                    cellWithoutBomb,
+                    cellWithoutBomb,
+                    cellWithBomb,
+                ]);
+                const gridDug = grid.sendActionToCell(0, 'dig');
+                const dugCell = gridDug.cells[0];
+                expect(dugCell.status).toBe('dug');
+                expect(dugCell.minesAround).toBe(1);
+            });
         });
     });
 
