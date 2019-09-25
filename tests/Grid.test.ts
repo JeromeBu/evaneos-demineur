@@ -1,4 +1,4 @@
-import { Grid } from '../src/Domain/Grid';
+import { Grid, Coord } from '../src/Domain/Grid';
 import { Cell } from '../src/Domain/Cell';
 
 describe(Grid, () => {
@@ -86,5 +86,38 @@ describe(Grid, () => {
 
             expect(mineCount).toBe(10);
         });
+    });
+    describe('gets correct cell coordinate', () => {
+        it('on one cell grid', () => {
+            const cellWithoutBomb = Cell.withoutBomb();
+            const columns = 1;
+            const cells = [cellWithoutBomb];
+            const grid = new Grid(columns, cells);
+            expectCellCoordinates(grid, 0, { x: 0, y: 0 });
+        });
+
+        it('on 4x4 grid', () => {
+            const cell = Cell.withoutBomb();
+            const columns = 4;
+            const cells = Array(16).fill(cell);
+            const grid = new Grid(columns, cells);
+            expectCellCoordinates(grid, 0, { x: 0, y: 0 });
+            expectCellCoordinates(grid, 1, { x: 1, y: 0 });
+            expectCellCoordinates(grid, 2, { x: 2, y: 0 });
+            expectCellCoordinates(grid, 3, { x: 3, y: 0 });
+            expectCellCoordinates(grid, 4, { x: 0, y: 1 });
+            expectCellCoordinates(grid, 7, { x: 3, y: 1 });
+            expectCellCoordinates(grid, 15, { x: 3, y: 3 });
+        });
+
+        const expectCellCoordinates = (
+            gird: Grid,
+            cellIndex: number,
+            expectedCoordinates: Coord
+        ) => {
+            expect(gird.getCellCoodinates(cellIndex)).toEqual(
+                expectedCoordinates
+            );
+        };
     });
 });
