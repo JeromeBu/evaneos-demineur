@@ -7,6 +7,10 @@ export type Coord = {
     y: number;
 };
 
+const isCell = (test: Cell | undefined): test is Cell => {
+    return test !== undefined;
+};
+
 export class Grid {
     [key: number]: number;
     private _column: number;
@@ -64,6 +68,9 @@ export class Grid {
     }
 
     cellByCoodinates(x: number, y: number): Cell | undefined {
+        if (x < 0 || y < 0) return;
+        if (x >= this.column) return;
+        if (y >= Math.floor(this._cells.length / this.column)) return;
         return this._cells[this._column * y + x];
     }
 
@@ -95,9 +102,20 @@ export class Grid {
         });
     }
 
-    private findCellsAround(cellIndex: number): Cells {
-        // TODO: code this
-        return [];
+    findCellsAround(cellIndex: number): Cells {
+        const { x, y } = this.getCellCoodinates(cellIndex);
+
+        // circle clockwise starting at x - 1 , y - 1
+        return [
+            this.cellByCoodinates(x - 1, y - 1),
+            this.cellByCoodinates(x, y - 1),
+            this.cellByCoodinates(x + 1, y - 1),
+            this.cellByCoodinates(x + 1, y),
+            this.cellByCoodinates(x + 1, y + 1),
+            this.cellByCoodinates(x, y + 1),
+            this.cellByCoodinates(x - 1, y + 1),
+            this.cellByCoodinates(x - 1, y),
+        ].filter(isCell);
     }
 
     getCellCoodinates(cellIndex: number): Coord {

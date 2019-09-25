@@ -1,4 +1,4 @@
-import { Grid, Coord } from '../src/Domain/Grid';
+import { Grid, Coord, Cells } from '../src/Domain/Grid';
 import { Cell } from '../src/Domain/Cell';
 
 describe(Grid, () => {
@@ -87,7 +87,7 @@ describe(Grid, () => {
             expect(mineCount).toBe(10);
         });
     });
-    describe('gets correct cell coordinate', () => {
+    describe('getCellCoodinates', () => {
         it('on one cell grid', () => {
             const cellWithoutBomb = Cell.withoutBomb();
             const columns = 1;
@@ -118,6 +118,38 @@ describe(Grid, () => {
             expect(gird.getCellCoodinates(cellIndex)).toEqual(
                 expectedCoordinates
             );
+        };
+    });
+    describe('findCellsAround', () => {
+        it('on one cell grid', () => {
+            const cellWithoutBomb = Cell.withoutBomb();
+            const columns = 1;
+            const cells = [cellWithoutBomb];
+            const grid = new Grid(columns, cells);
+            expectCellsAround(grid, 0, []);
+        });
+        it('on 3x2 grid', () => {
+            const cell0 = Cell.withoutBomb();
+            const cell1 = Cell.withBomb();
+            const cell2 = Cell.withoutBomb();
+            const cell3 = Cell.withoutBomb();
+            const cell4 = Cell.withBomb();
+            const cell5 = Cell.withoutBomb();
+            const columns = 3;
+            const cells = [cell0, cell1, cell2, cell3, cell4, cell5];
+            const grid = new Grid(columns, cells);
+            expectCellsAround(grid, 0, [cell1, cell4, cell3]);
+            expectCellsAround(grid, 1, [cell2, cell5, cell4, cell3, cell0]);
+            expectCellsAround(grid, 4, [cell0, cell1, cell2, cell5, cell3]);
+            expectCellsAround(grid, 5, [cell1, cell2, cell4]);
+        });
+
+        const expectCellsAround = (
+            gird: Grid,
+            cellIndex: number,
+            expectedCells: Cells
+        ) => {
+            expect(gird.findCellsAround(cellIndex)).toEqual(expectedCells);
         };
     });
 });
