@@ -2,6 +2,11 @@ import { Cell, CellAction } from './Cell';
 
 export type Cells = Array<Cell>;
 
+export type Coord = {
+    x: number;
+    y: number;
+};
+
 export class Grid {
     [key: number]: number;
     private _column: number;
@@ -40,6 +45,7 @@ export class Grid {
 
         this._column = column;
         this._cells = cells;
+        this.calculateMineRepartition();
     }
 
     [Symbol.iterator]() {
@@ -75,5 +81,29 @@ export class Grid {
 
     get cells() {
         return this._cells;
+    }
+
+    private calculateMineRepartition(): Cells {
+        return this._cells.map((calculatedCell, cellIndex) => {
+            const neighbourghCells: Cells = this.findCellsAround(cellIndex);
+            const numberOfMines = neighbourghCells.reduce(
+                (mines: number, cell) => (cell.hasMine ? mines + 1 : mines),
+                0
+            );
+            calculatedCell.setMinesArounds(numberOfMines);
+            return calculatedCell;
+        });
+    }
+
+    private findCellsAround(cellIndex: number): Cells {
+        // TODO: code this
+        return [];
+    }
+
+    getCellCoodinates(cellIndex: number): Coord {
+        return {
+            x: cellIndex % this._column,
+            y: Math.floor(cellIndex / this._column),
+        };
     }
 }
