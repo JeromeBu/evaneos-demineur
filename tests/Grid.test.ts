@@ -18,7 +18,7 @@ describe(Grid, () => {
                 unexpected,
             ]);
 
-            expect(grid.cellByCoodinates(0, 0)).toBe(expected);
+            expect(grid.cellByCoodinates(0, 0)).toEqual(expected);
         });
 
         test('it get the last cell in grid when asking for x:3 y:1', () => {
@@ -36,7 +36,7 @@ describe(Grid, () => {
             ]);
 
             const cell = grid.cellByCoodinates(3, 1);
-            expect(cell).toBe(expected);
+            expect(cell).toEqual(expected);
         });
     });
 
@@ -88,7 +88,7 @@ describe(Grid, () => {
         });
     });
     describe('getCellCoodinates', () => {
-        it('on one cell grid', () => {
+        test('on one cell grid', () => {
             const cellWithoutBomb = Cell.withoutBomb();
             const columns = 1;
             const cells = [cellWithoutBomb];
@@ -96,7 +96,7 @@ describe(Grid, () => {
             expectCellCoordinates(grid, 0, { x: 0, y: 0 });
         });
 
-        it('on 4x4 grid', () => {
+        test('on 4x4 grid', () => {
             const cell = Cell.withoutBomb();
             const columns = 4;
             const cells = Array(16).fill(cell);
@@ -121,14 +121,14 @@ describe(Grid, () => {
         };
     });
     describe('findCellsAround', () => {
-        it('on one cell grid', () => {
+        test('on one cell grid', () => {
             const cellWithoutBomb = Cell.withoutBomb();
             const columns = 1;
             const cells = [cellWithoutBomb];
             const grid = new Grid(columns, cells);
             expectCellsAround(grid, 0, []);
         });
-        it('on 3x2 grid', () => {
+        test('on 3x2 grid', () => {
             const cell0 = Cell.withoutBomb();
             const cell1 = Cell.withBomb();
             const cell2 = Cell.withoutBomb();
@@ -149,7 +149,19 @@ describe(Grid, () => {
             cellIndex: number,
             expectedCells: Cells
         ) => {
-            expect(gird.findCellsAround(cellIndex)).toEqual(expectedCells);
+            expect(
+                gird
+                    .findCellsAround(cellIndex)
+                    .map(getSameCellIgnoringMinesAround)
+            ).toEqual(expectedCells);
+        };
+
+        const getSameCellIgnoringMinesAround = ({
+            hasMine,
+            flagged,
+            dug,
+        }: Cell): Cell => {
+            return new Cell(hasMine, flagged, dug);
         };
     });
 });
