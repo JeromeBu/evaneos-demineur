@@ -5,7 +5,7 @@ export class Cell {
     private _bomb: boolean;
     private _flagged: boolean;
     private _dug: boolean;
-    private _minesAround: number = 0;
+    private _minesAround: number;
 
     static withBomb(): Cell {
         return new Cell(true, false, false);
@@ -15,10 +15,16 @@ export class Cell {
         return new Cell(false, false, false);
     }
 
-    constructor(withBomb: boolean, flagged: boolean, dug: boolean) {
+    constructor(
+        withBomb: boolean,
+        flagged: boolean,
+        dug: boolean,
+        minesAround: number = 0
+    ) {
         this._bomb = withBomb;
         this._flagged = flagged;
         this._dug = dug;
+        this._minesAround = minesAround;
     }
 
     flag(): Cell {
@@ -66,6 +72,11 @@ export class Cell {
     }
 
     setMinesArounds(numberOfMinesAround: number) {
-        this._minesAround = numberOfMinesAround;
+        return new Cell(
+            this._bomb,
+            this._flagged,
+            this._dug,
+            numberOfMinesAround
+        );
     }
 }

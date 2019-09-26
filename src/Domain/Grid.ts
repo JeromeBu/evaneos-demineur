@@ -49,7 +49,8 @@ export class Grid {
 
         this._column = column;
         this._cells = cells;
-        this.calculateMineRepartition();
+        const cellsWithRepartition = this.calculateMineRepartition();
+        this._cells = cellsWithRepartition;
     }
 
     [Symbol.iterator]() {
@@ -97,15 +98,14 @@ export class Grid {
                 (mines: number, cell) => (cell.hasMine ? mines + 1 : mines),
                 0
             );
-            calculatedCell.setMinesArounds(numberOfMines);
-            return calculatedCell;
+            return calculatedCell.setMinesArounds(numberOfMines);
         });
     }
 
     findCellsAround(cellIndex: number): Cells {
         const { x, y } = this.getCellCoodinates(cellIndex);
 
-        // circle clockwise starting at x - 1 , y - 1
+        // circle aroound cell clockwise starting at x - 1 , y - 1
         return [
             this.cellByCoodinates(x - 1, y - 1),
             this.cellByCoodinates(x, y - 1),
