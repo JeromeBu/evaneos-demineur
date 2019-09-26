@@ -32,6 +32,7 @@ export const Grid: React.FunctionComponent = () => {
                     <Cell
                         key={index}
                         status={cell.status}
+                        minesAround={cell.minesAround}
                         onclick={(ev: MouseEvent) =>
                             handleClick(index, ev.button)
                         }

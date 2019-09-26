@@ -3,10 +3,11 @@ import { CellStatus } from '../Domain/Cell';
 
 type CellProps = {
     status: CellStatus;
+    minesAround: number;
     onclick: Function;
 };
 
-const emojis = {
+const emojis: { [key in CellStatus]: string } = {
     untouched: '',
     dug: '',
     flagged: '🚩',
@@ -25,20 +26,20 @@ const cellStyle = (status: CellStatus): React.CSSProperties => ({
         status === 'untouched' || status === 'flagged' ? '#ccc' : undefined,
 });
 
-export const Cell: React.FunctionComponent<CellProps> = props => {
-    return (
-        <div
-            onClick={ev => {
-                ev.preventDefault();
-                props.onclick(ev);
-            }}
-            onContextMenu={ev => {
-                ev.preventDefault();
-                props.onclick(ev);
-            }}
-            style={cellStyle(props.status)}
-        >
-            {emojis[props.status]}
-        </div>
-    );
-};
+export const Cell: React.FC<CellProps> = ({ minesAround, onclick, status }) => (
+    <div
+        onClick={ev => {
+            ev.preventDefault();
+            onclick(ev);
+        }}
+        onContextMenu={ev => {
+            ev.preventDefault();
+            onclick(ev);
+        }}
+        style={cellStyle(status)}
+    >
+        {status === 'dug' && minesAround > 0
+            ? minesAround.toString()
+            : emojis[status]}
+    </div>
+);
