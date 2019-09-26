@@ -30,19 +30,31 @@ describe(Cell, () => {
                     dugCell.flag();
                 }).toThrowError();
             });
-            test('mineArround is 1 if there is a mine around', () => {
-                const cellWithoutBomb = Cell.withoutBomb();
+            test('minesArround shows the right amount of neighbour mines', () => {
+                const cellWithout = Cell.withoutBomb();
                 const cellWithBomb = Cell.withBomb();
-                const grid = new Grid(2, [
-                    cellWithoutBomb,
-                    cellWithoutBomb,
-                    cellWithoutBomb,
+                const grid = new Grid(3, [
+                    cellWithBomb,
+                    cellWithout,
+                    cellWithout,
+                    cellWithout,
+                    cellWithout,
+                    cellWithout,
+                    cellWithout,
+                    cellWithBomb,
                     cellWithBomb,
                 ]);
-                const gridDug = grid.sendActionToCell(0, 'dig');
-                const dugCell = gridDug.cells[0];
-                expect(dugCell.status).toBe('dug');
-                expect(dugCell.minesAround).toBe(1);
+                // dispostion :
+                //     x 0 0
+                //     0 0 0
+                //     0 x x
+                expect(grid.cells[0].minesAround).toBe(0);
+                expect(grid.cells[1].minesAround).toBe(1);
+                expect(grid.cells[2].minesAround).toBe(0);
+                expect(grid.cells[3].minesAround).toBe(2);
+                expect(grid.cells[4].minesAround).toBe(3);
+                expect(grid.cells[5].minesAround).toBe(2);
+                expect(grid.cells[8].minesAround).toBe(1);
             });
         });
     });
