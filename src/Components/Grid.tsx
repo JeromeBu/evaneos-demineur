@@ -10,9 +10,12 @@ const wrapper: React.CSSProperties = {
 };
 
 export const Grid: React.FunctionComponent = () => {
-    const { grid, updateGridCellStatus, cancelLastShot } = React.useContext(
-        GameContext
-    );
+    const {
+        grid,
+        updateGridCellStatus,
+        cancelLastShot,
+        score,
+    } = React.useContext(GameContext);
 
     const handleClick = (index: number, button: number) => {
         updateGridCellStatus(index, button === 0 ? 'dig' : 'flag');
@@ -33,7 +36,11 @@ export const Grid: React.FunctionComponent = () => {
 
     return (
         <div style={wrapper}>
-            <Game gameOver={gameOver} cancelLastShot={cancelLastShot} />
+            <Game
+                gameOver={gameOver}
+                cancelLastShot={cancelLastShot}
+                score={score}
+            />
             <div
                 style={{
                     display: 'flex',

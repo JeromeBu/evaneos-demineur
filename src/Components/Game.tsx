@@ -1,10 +1,5 @@
 import React from 'react';
 
-type GameProps = {
-    gameOver: false | 'victory' | 'defeat';
-    cancelLastShot: () => void;
-};
-
 const buildGameStyle = (
     gameOver: GameProps['gameOver']
 ): React.CSSProperties => {
@@ -32,13 +27,25 @@ const buildGameStyle = (
     };
 };
 
+type GameProps = {
+    gameOver: false | 'victory' | 'defeat';
+    cancelLastShot: () => void;
+    score: number;
+};
+
 const actionButton: React.CSSProperties = {
     cursor: 'pointer',
+};
+
+const scoreStyle: React.CSSProperties = {
+    color: 'red',
+    fontWeight: 'bolder',
 };
 
 export const Game: React.FunctionComponent<GameProps> = ({
     gameOver,
     cancelLastShot,
+    score,
 }) => {
     const displayedText = !gameOver
         ? 'Jeu en cours'
@@ -49,6 +56,7 @@ export const Game: React.FunctionComponent<GameProps> = ({
     return (
         <div style={buildGameStyle(gameOver)}>
             <div>{displayedText}</div>
+            <div style={scoreStyle}>{score}</div>
             <div style={actionButton} onClick={cancelLastShot}>
                 <img src="/previous.svg" width="20px" />
             </div>

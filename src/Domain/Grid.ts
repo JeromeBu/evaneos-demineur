@@ -1,4 +1,5 @@
 import { Cell, CellAction } from './Cell';
+import { Score } from './Score';
 
 export type Cells = Array<Cell>;
 
@@ -17,6 +18,11 @@ export class Grid {
     private _column: number;
     private _cells: Cells;
     private _previousGrid: Grid | null;
+    private _score: Score;
+
+    get score() {
+        return this._score.value;
+    }
 
     static generate(row: number, column: number, minesCount: number): Grid {
         const length = row * column;
@@ -35,12 +41,13 @@ export class Grid {
             cells[index] = cell;
         }
 
-        return new Grid(column, cells);
+        return new Grid(column, cells, new Score(cells.length));
     }
 
     constructor(
         column: number,
         cells: Cells,
+        score: Score,
         previousGrid: Grid | null = null
     ) {
         if (!Number.isInteger(column)) {
@@ -56,6 +63,7 @@ export class Grid {
         this._column = column;
         this._cells = cells;
         this._previousGrid = previousGrid;
+        this._score = score;
         const cellsWithRepartition = this.calculateMineRepartition();
         this._cells = cellsWithRepartition;
     }
@@ -65,6 +73,7 @@ export class Grid {
     }
 
     cancelLastShot(): Grid | null {
+        this._score.canceledShot();
         return this._previousGrid;
     }
 
@@ -104,10 +113,13 @@ export class Grid {
             );
             return this.sendActionToManyCells(cellsIndexesToDig, 'dig', cells);
         }
+        if (action === 'flag') {
+            this._score.flagUsed();
+        }
 
         cells[cellIndex] = cell[action]();
         const previousGrid = this;
-        return new Grid(this._column, cells, previousGrid);
+        return new Grid(this._column, cells, this._score, previousGrid);
     }
 
     private isCellAndAroundEmpty = (cell: Cell) =>
@@ -146,7 +158,7 @@ export class Grid {
         });
 
         const previousGrid = this;
-        return new Grid(this._column, cells, previousGrid);
+        return new Grid(this._column, cells, this._score, previousGrid);
     }
 
     get column() {

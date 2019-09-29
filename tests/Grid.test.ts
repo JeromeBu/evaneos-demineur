@@ -1,22 +1,21 @@
 import { Grid, Coord, Cells } from '../src/Domain/Grid';
 import { Cell } from '../src/Domain/Cell';
+import { Score } from '../src/Domain/Score';
 
 describe(Grid, () => {
     test('it needs to be filled', () => {
-        expect(() => new Grid(2, [])).toThrowError(RangeError);
+        expect(() => new Grid(2, [], new Score(2))).toThrowError(RangeError);
     });
 
     describe('getByCoordinate', () => {
         test('it get the first cell in grid when asking for x:0 y:0', () => {
             const expected = Cell.withBomb();
             const unexpected = Cell.withoutBomb();
-            const grid = new Grid(5, [
-                expected,
-                unexpected,
-                unexpected,
-                unexpected,
-                unexpected,
-            ]);
+            const grid = new Grid(
+                5,
+                [expected, unexpected, unexpected, unexpected, unexpected],
+                new Score(5)
+            );
 
             expect(grid.cellByCoodinates(0, 0)).toEqual(expected);
         });
@@ -24,16 +23,20 @@ describe(Grid, () => {
         test('it get the last cell in grid when asking for x:3 y:1', () => {
             const expected = Cell.withBomb();
             const unexpected = Cell.withoutBomb();
-            const grid = new Grid(4, [
-                unexpected,
-                unexpected,
-                unexpected,
-                unexpected,
-                unexpected,
-                unexpected,
-                unexpected,
-                expected,
-            ]);
+            const grid = new Grid(
+                4,
+                [
+                    unexpected,
+                    unexpected,
+                    unexpected,
+                    unexpected,
+                    unexpected,
+                    unexpected,
+                    unexpected,
+                    expected,
+                ],
+                new Score(8)
+            );
 
             const cell = grid.cellByCoodinates(3, 1);
             expect(cell).toEqual(expected);
@@ -95,7 +98,8 @@ describe(Grid, () => {
                 const cellWithoutBomb = Cell.withoutBomb();
                 const columns = 2;
                 const cells = [cellWithBomb, cellWithoutBomb];
-                const initialGrid = new Grid(columns, cells);
+                const score = new Score(cells.length);
+                const initialGrid = new Grid(columns, cells, score);
                 const grid = initialGrid.sendActionToCell(0, 'dig');
                 expect(grid.cellByIndex(0)).toEqual(cellWithBomb.dig());
                 const lastCell = checkNotNull(grid.cellByIndex(1));
@@ -110,7 +114,8 @@ describe(Grid, () => {
                 const cellWithoutBomb = Cell.withoutBomb();
                 const columns = 2;
                 const cells = [cellWithBomb, cellWithoutBomb];
-                const initialGrid = new Grid(columns, cells);
+                const score = new Score(cells.length);
+                const initialGrid = new Grid(columns, cells, score);
                 const grid = initialGrid.sendActionToCell(1, 'dig');
                 expect(grid.cellByIndex(0)).toEqual(cellWithBomb);
                 const lastCell = checkNotNull(grid.cellByIndex(1));
@@ -128,7 +133,8 @@ describe(Grid, () => {
                     cellWithBomb,
                     ...Array(7).fill(cellWithoutBomb),
                 ];
-                const initialGrid = new Grid(columns, cells);
+                const score = new Score(cells.length);
+                const initialGrid = new Grid(columns, cells, score);
                 // dispostion :
                 //  B x x x x   expect  x  1 dug 0  0
                 //  x x x x x           x  2  1  1  0
@@ -188,7 +194,8 @@ describe(Grid, () => {
             const dugCell = Cell.withoutBomb().dig();
             const columns = 3;
             const cells = [cellWithBomb, ...Array(5).fill(cellWithoutBomb)];
-            const initialGrid = new Grid(columns, cells);
+            const score = new Score(cells.length);
+            const initialGrid = new Grid(columns, cells, score);
 
             const dugGrid = initialGrid.sendActionToCell(2, 'dig');
 
@@ -205,7 +212,8 @@ describe(Grid, () => {
             const cellWithoutBomb = Cell.withoutBomb();
             const columns = 1;
             const cells = [cellWithoutBomb];
-            const grid = new Grid(columns, cells);
+            const score = new Score(cells.length);
+            const grid = new Grid(columns, cells, score);
             expectCellCoordinates(grid, 0, { x: 0, y: 0 });
         });
 
@@ -213,7 +221,8 @@ describe(Grid, () => {
             const cell = Cell.withoutBomb();
             const columns = 4;
             const cells = Array(16).fill(cell);
-            const grid = new Grid(columns, cells);
+            const score = new Score(cells.length);
+            const grid = new Grid(columns, cells, score);
             expectCellCoordinates(grid, 0, { x: 0, y: 0 });
             expectCellCoordinates(grid, 1, { x: 1, y: 0 });
             expectCellCoordinates(grid, 2, { x: 2, y: 0 });
@@ -238,7 +247,8 @@ describe(Grid, () => {
             const cellWithoutBomb = Cell.withoutBomb();
             const columns = 1;
             const cells = [cellWithoutBomb];
-            const grid = new Grid(columns, cells);
+            const score = new Score(cells.length);
+            const grid = new Grid(columns, cells, score);
             expectCellsAround(grid, 0, []);
         });
         test('on 3x2 grid', () => {
@@ -250,7 +260,8 @@ describe(Grid, () => {
             const cell5 = Cell.withoutBomb();
             const columns = 3;
             const cells = [cell0, cell1, cell2, cell3, cell4, cell5];
-            const grid = new Grid(columns, cells);
+            const score = new Score(cells.length);
+            const grid = new Grid(columns, cells, score);
             expectCellsAround(grid, 0, [cell1, cell4, cell3]);
             expectCellsAround(grid, 1, [cell2, cell5, cell4, cell3, cell0]);
             expectCellsAround(grid, 4, [cell0, cell1, cell2, cell5, cell3]);

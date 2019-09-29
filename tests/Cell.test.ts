@@ -1,5 +1,6 @@
 import { Cell } from '../src/Domain/Cell';
 import { Grid } from '../src/Domain/Grid';
+import { Score } from '../src/Domain/Score';
 
 describe(Cell, () => {
     describe('without a bomb', () => {
@@ -33,7 +34,7 @@ describe(Cell, () => {
             test('minesArround shows the right amount of neighbour mines', () => {
                 const cellWithout = Cell.withoutBomb();
                 const cellWithBomb = Cell.withBomb();
-                const grid = new Grid(3, [
+                const cells = [
                     cellWithBomb,
                     cellWithout,
                     cellWithout,
@@ -43,7 +44,9 @@ describe(Cell, () => {
                     cellWithout,
                     cellWithBomb,
                     cellWithBomb,
-                ]);
+                ];
+                const score = new Score(cells.length);
+                const grid = new Grid(3, cells, score);
                 // dispostion :
                 //     x 0 0
                 //     0 0 0
