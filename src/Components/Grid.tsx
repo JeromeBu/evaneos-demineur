@@ -4,6 +4,11 @@ import { Cell } from './Cell';
 import { Game } from './Game';
 import { isDefeated, isVictorious } from '../Domain/Rules';
 
+const wrapper: React.CSSProperties = {
+    margin: 'auto',
+    width: '402px',
+};
+
 export const Grid: React.FunctionComponent = () => {
     const { grid, updateGridCellStatus } = React.useContext(GameContext);
 
@@ -16,13 +21,21 @@ export const Grid: React.FunctionComponent = () => {
         (isVictorious(grid) && 'victory') ||
         false;
 
+    const isDark = (index: number): boolean => {
+        const { column } = grid;
+        const isOddColumn = column % 2 === 1;
+        if (isOddColumn) return index % 2 === 0;
+        const isLineOdd = Math.floor(index / column) % 2 === 0;
+        return isLineOdd ? index % 2 === 0 : index % 2 === 1;
+    };
+
     return (
-        <React.Fragment>
+        <div style={wrapper}>
             <Game gameOver={gameOver} />
             <div
                 style={{
                     display: 'flex',
-                    border: '1px solid black',
+                    border: '1px solid grey',
                     boxSizing: 'content-box',
                     flexWrap: 'wrap',
                     width: `calc(40px * ${grid.column})`,
@@ -31,6 +44,7 @@ export const Grid: React.FunctionComponent = () => {
                 {grid.map((cell, index) => (
                     <Cell
                         key={index}
+                        isDark={isDark(index)}
                         status={cell.status}
                         minesAround={cell.minesAround}
                         onclick={(ev: MouseEvent) =>
@@ -39,6 +53,6 @@ export const Grid: React.FunctionComponent = () => {
                     />
                 ))}
             </div>
-        </React.Fragment>
+        </div>
     );
 };

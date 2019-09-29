@@ -5,6 +5,7 @@ type CellProps = {
     status: CellStatus;
     minesAround: number;
     onclick: Function;
+    isDark: boolean;
 };
 
 const emojis: { [key in CellStatus]: string } = {
@@ -14,19 +15,41 @@ const emojis: { [key in CellStatus]: string } = {
     detonated: '💥',
 };
 
-const cellStyle = (status: CellStatus): React.CSSProperties => ({
-    width: '40px',
-    height: '40px',
-    textAlign: 'center',
-    lineHeight: '40px',
-    border: '1px solid black',
-    boxSizing: 'border-box',
-    cursor: 'pointer',
-    backgroundColor:
-        status === 'untouched' || status === 'flagged' ? '#ccc' : undefined,
-});
+const notDugDark = '#9ad0fe';
+const notDugLight = '#85c7ff';
+const dugDark = '#fdf5e6';
+const dugLight = '#f0eee9';
 
-export const Cell: React.FC<CellProps> = ({ minesAround, onclick, status }) => (
+const cellStyle = (
+    status: CellStatus,
+    isDark: boolean
+): React.CSSProperties => {
+    const notDugColor = isDark ? notDugDark : notDugLight;
+    const dugColor = isDark ? dugDark : dugLight;
+    return {
+        width: '40px',
+        height: '40px',
+        fontFamily: 'sans-serif',
+        fontSize:
+            status === 'detonated' || status === 'flagged' ? '2rem' : '1rem',
+        fontWeight: 'lighter',
+        textAlign: 'center',
+        lineHeight: '40px',
+        boxSizing: 'border-box',
+        cursor: 'pointer',
+        backgroundColor:
+            status === 'untouched' || status === 'flagged'
+                ? notDugColor
+                : dugColor,
+    };
+};
+
+export const Cell: React.FC<CellProps> = ({
+    minesAround,
+    onclick,
+    status,
+    isDark,
+}) => (
     <div
         onClick={ev => {
             ev.preventDefault();
@@ -36,7 +59,7 @@ export const Cell: React.FC<CellProps> = ({ minesAround, onclick, status }) => (
             ev.preventDefault();
             onclick(ev);
         }}
-        style={cellStyle(status)}
+        style={cellStyle(status, isDark)}
     >
         {status === 'dug' && minesAround > 0
             ? minesAround.toString()
