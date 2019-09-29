@@ -87,6 +87,102 @@ describe(Grid, () => {
             expect(mineCount).toBe(10);
         });
     });
+
+    describe('dig all neighbours when there is no mines around', () => {
+        describe('dug cell has bomb', () => {
+            test('does not dig mines around', () => {
+                const cellWithBomb = Cell.withBomb();
+                const cellWithoutBomb = Cell.withoutBomb();
+                const columns = 2;
+                const cells = [cellWithBomb, cellWithoutBomb];
+                const initialGrid = new Grid(columns, cells);
+                const grid = initialGrid.sendActionToCell(0, 'dig');
+                expect(grid.cellByIndex(0)).toEqual(cellWithBomb.dig());
+                const lastCell = checkNotNull(grid.cellByIndex(1));
+                expect(ignoreMinesAroundValue(lastCell)).toEqual(
+                    cellWithoutBomb
+                );
+            });
+        });
+        describe('dug cell has a mine around', () => {
+            test('does not dig mines around', () => {
+                const cellWithBomb = Cell.withBomb();
+                const cellWithoutBomb = Cell.withoutBomb();
+                const columns = 2;
+                const cells = [cellWithBomb, cellWithoutBomb];
+                const initialGrid = new Grid(columns, cells);
+                const grid = initialGrid.sendActionToCell(1, 'dig');
+                expect(grid.cellByIndex(0)).toEqual(cellWithBomb);
+                const lastCell = checkNotNull(grid.cellByIndex(1));
+                expect(lastCell).toEqual(new Cell(false, false, true, 1));
+            });
+        });
+        describe('dug cell with no mine around', () => {
+            test('all mines around should be dug', () => {
+                const cellWithBomb = Cell.withBomb();
+                const cellWithoutBomb = Cell.withoutBomb();
+                const columns = 5;
+                const cells = [
+                    cellWithBomb,
+                    ...Array(11).fill(cellWithoutBomb),
+                    cellWithBomb,
+                    ...Array(7).fill(cellWithoutBomb),
+                ];
+                const initialGrid = new Grid(columns, cells);
+                // dispostion :
+                //  B x x x x   expect  x  1 dug 0  0
+                //  x x x x x           x  2  1  1  0
+                //  x x B x x           x  x  x  1  0
+                //  x x x x x           x  x  x  1  0
+
+                //          indexes:    0  1  2  3  4
+                //                      5  6  7  8  9
+                //                     10 11 12 13 14
+                //                     15 16 17 18 19
+
+                const grid = initialGrid.sendActionToCell(2, 'dig');
+
+                const expectCellToBe = (dug: boolean) => (
+                    cellIndex: number
+                ) => {
+                    expect(checkNotNull(grid.cellByIndex(cellIndex)).dug).toBe(
+                        dug
+                    );
+                };
+
+                const expectCellToBeDug = expectCellToBe(true);
+                const expectCellToNotBeDug = expectCellToBe(false);
+
+                expectCellToNotBeDug(0);
+                expectCellToBeDug(1);
+                expectCellToBeDug(2);
+                expectCellToBeDug(3);
+                expectCellToBeDug(4);
+                expectCellToNotBeDug(5);
+                expectCellToBeDug(6);
+                expectCellToBeDug(7);
+                expectCellToBeDug(8);
+                expectCellToBeDug(9);
+                expectCellToNotBeDug(10);
+                expectCellToNotBeDug(11);
+                expectCellToNotBeDug(12);
+                expectCellToBeDug(13);
+                expectCellToBeDug(14);
+                expectCellToNotBeDug(15);
+                expectCellToNotBeDug(16);
+                expectCellToNotBeDug(17);
+                expectCellToBeDug(18);
+                expectCellToBeDug(19);
+            });
+        });
+        const checkNotNull = <T>(element: T | undefined | null): T => {
+            expect(element).toBeDefined();
+            return element!;
+        };
+    });
+
+    // Following test are testing only implementations, and are here to help dev
+    // TODO : change the methods to 'private' and delete those tests
     describe('getCellCoodinates', () => {
         test('on one cell grid', () => {
             const cellWithoutBomb = Cell.withoutBomb();
@@ -155,12 +251,8 @@ describe(Grid, () => {
                 })
             ).toEqual(expectedCells);
         };
-        const ignoreMinesAroundValue = ({
-            hasMine,
-            flagged,
-            dug,
-        }: Cell): Cell => {
-            return new Cell(hasMine, flagged, dug);
-        };
     });
+    const ignoreMinesAroundValue = ({ hasMine, flagged, dug }: Cell): Cell => {
+        return new Cell(hasMine, flagged, dug);
+    };
 });

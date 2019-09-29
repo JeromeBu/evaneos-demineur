@@ -86,7 +86,55 @@ export class Grid {
         const cells = [...this._cells];
         const cell = cells[cellIndex];
 
+        if (action === 'dig' && this.isCellAndAroundEmpty(cell)) {
+            const cellsIndexesToDig = this.breadthFirstSearch(
+                cellIndex,
+                cells,
+                this.isCellAndAroundEmpty
+            );
+            return this.sendActionToManyCells(cellsIndexesToDig, 'dig', cells);
+        }
+
         cells[cellIndex] = cell[action]();
+
+        return new Grid(this._column, cells);
+    }
+
+    private isCellAndAroundEmpty = (cell: Cell) =>
+        !cell.dug && !cell.hasMine && cell.minesAround === 0;
+
+    private breadthFirstSearch(
+        intialCellIndex: number,
+        cells: Cells,
+        criteria: (cell: Cell) => boolean
+    ): number[] {
+        const toVisit: number[] = [intialCellIndex];
+        const visited: number[] = [];
+        while (toVisit.length > 0) {
+            const cellIndex = toVisit.shift()!;
+            const respectsCritera = criteria(cells[cellIndex]);
+            if (respectsCritera) {
+                this.findCellsAround(cellIndex).forEach(({ index }) => {
+                    if (!visited.includes(index) && !toVisit.includes(index)) {
+                        toVisit.push(index);
+                    }
+                });
+            }
+            visited.push(cellIndex);
+        }
+        return visited.sort((a, b) => a - b);
+    }
+
+    sendActionToManyCells(
+        cellIndexes: number[],
+        action: CellAction,
+        cells: Cells
+    ): Grid {
+        cellIndexes.map(cellIndex => {
+            const cell = cells[cellIndex];
+            cells[cellIndex] = cell[action]();
+        });
+
         return new Grid(this._column, cells);
     }
 
@@ -129,7 +177,7 @@ export class Grid {
         return indexes.reduce<CellWithIndex[]>((acc, i) => {
             const cell = this.cellByIndex(i);
             if (!cell) return acc;
-        return [
+            return [
                 ...acc,
                 {
                     index: i,
