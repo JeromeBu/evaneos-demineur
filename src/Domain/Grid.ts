@@ -7,8 +7,9 @@ export type Coord = {
     y: number;
 };
 
-const isCell = (test: Cell | undefined): test is Cell => {
-    return test !== undefined;
+type CellWithIndex = {
+    index: number;
+    cell: Cell;
 };
 
 export class Grid {
@@ -69,11 +70,17 @@ export class Grid {
     }
 
     cellByCoodinates(x: number, y: number): Cell | undefined {
+        const cellIndex = this.indexFromCoord(x, y);
+        if (cellIndex === undefined) return;
+        return this._cells[cellIndex];
+    }
+
+    private indexFromCoord = (x: number, y: number) => {
         if (x < 0 || y < 0) return;
         if (x >= this.column) return;
         if (y >= Math.floor(this._cells.length / this.column)) return;
-        return this._cells[this._column * y + x];
-    }
+        return this._column * y + x;
+    };
 
     sendActionToCell(cellIndex: number, action: CellAction): Grid {
         const cells = [...this._cells];
@@ -93,7 +100,9 @@ export class Grid {
 
     private calculateMineRepartition(): Cells {
         return this._cells.map((calculatedCell, cellIndex) => {
-            const neighbourghCells: Cells = this.findCellsAround(cellIndex);
+            const neighbourghCells: Cells = this.findCellsAround(cellIndex).map(
+                ({ cell }) => cell
+            );
             const numberOfMines = neighbourghCells.reduce(
                 (mines: number, cell) => (cell.hasMine ? mines + 1 : mines),
                 0
@@ -102,21 +111,37 @@ export class Grid {
         });
     }
 
-    findCellsAround(cellIndex: number): Cells {
+    findCellsAround(cellIndex: number): CellWithIndex[] {
         const { x, y } = this.getCellCoodinates(cellIndex);
 
         // circle aroound cell clockwise starting at x - 1 , y - 1
+        const indexes = [
+            this.indexFromCoord(x - 1, y - 1),
+            this.indexFromCoord(x, y - 1),
+            this.indexFromCoord(x + 1, y - 1),
+            this.indexFromCoord(x + 1, y),
+            this.indexFromCoord(x + 1, y + 1),
+            this.indexFromCoord(x, y + 1),
+            this.indexFromCoord(x - 1, y + 1),
+            this.indexFromCoord(x - 1, y),
+        ].filter(this.isDefined);
+
+        return indexes.reduce<CellWithIndex[]>((acc, i) => {
+            const cell = this.cellByIndex(i);
+            if (!cell) return acc;
         return [
-            this.cellByCoodinates(x - 1, y - 1),
-            this.cellByCoodinates(x, y - 1),
-            this.cellByCoodinates(x + 1, y - 1),
-            this.cellByCoodinates(x + 1, y),
-            this.cellByCoodinates(x + 1, y + 1),
-            this.cellByCoodinates(x, y + 1),
-            this.cellByCoodinates(x - 1, y + 1),
-            this.cellByCoodinates(x - 1, y),
-        ].filter(isCell);
+                ...acc,
+                {
+                    index: i,
+                    cell,
+                },
+            ];
+        }, []);
     }
+
+    private isDefined = <T>(test: T | undefined): test is T => {
+        return test !== undefined;
+    };
 
     getCellCoodinates(cellIndex: number): Coord {
         return {

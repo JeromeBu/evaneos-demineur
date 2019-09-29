@@ -150,13 +150,12 @@ describe(Grid, () => {
             expectedCells: Cells
         ) => {
             expect(
-                gird
-                    .findCellsAround(cellIndex)
-                    .map(getSameCellIgnoringMinesAround)
+                gird.findCellsAround(cellIndex).map(({ cell }) => {
+                    return ignoreMinesAroundValue(cell);
+                })
             ).toEqual(expectedCells);
         };
-
-        const getSameCellIgnoringMinesAround = ({
+        const ignoreMinesAroundValue = ({
             hasMine,
             flagged,
             dug,
