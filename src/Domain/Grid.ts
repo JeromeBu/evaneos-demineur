@@ -16,6 +16,7 @@ export class Grid {
     [key: number]: number;
     private _column: number;
     private _cells: Cells;
+    private _previousGrid: Grid | null;
 
     static generate(row: number, column: number, minesCount: number): Grid {
         const length = row * column;
@@ -37,7 +38,11 @@ export class Grid {
         return new Grid(column, cells);
     }
 
-    constructor(column: number, cells: Cells) {
+    constructor(
+        column: number,
+        cells: Cells,
+        previousGrid: Grid | null = null
+    ) {
         if (!Number.isInteger(column)) {
             throw new TypeError('column count must be an integer');
         }
@@ -50,12 +55,17 @@ export class Grid {
 
         this._column = column;
         this._cells = cells;
+        this._previousGrid = previousGrid;
         const cellsWithRepartition = this.calculateMineRepartition();
         this._cells = cellsWithRepartition;
     }
 
     [Symbol.iterator]() {
         return this._cells[Symbol.iterator]();
+    }
+
+    cancelLastShot(): Grid | null {
+        return this._previousGrid;
     }
 
     map(
@@ -96,8 +106,8 @@ export class Grid {
         }
 
         cells[cellIndex] = cell[action]();
-
-        return new Grid(this._column, cells);
+        const previousGrid = this;
+        return new Grid(this._column, cells, previousGrid);
     }
 
     private isCellAndAroundEmpty = (cell: Cell) =>
@@ -125,7 +135,7 @@ export class Grid {
         return visited.sort((a, b) => a - b);
     }
 
-    sendActionToManyCells(
+    private sendActionToManyCells(
         cellIndexes: number[],
         action: CellAction,
         cells: Cells
@@ -135,7 +145,8 @@ export class Grid {
             cells[cellIndex] = cell[action]();
         });
 
-        return new Grid(this._column, cells);
+        const previousGrid = this;
+        return new Grid(this._column, cells, previousGrid);
     }
 
     get column() {

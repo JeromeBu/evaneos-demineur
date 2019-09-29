@@ -181,7 +181,24 @@ describe(Grid, () => {
         };
     });
 
-    // Following test are testing only implementations, and are here to help dev
+    describe('allows to cancel last shot', () => {
+        test('gets back to previous grid when canceling shot', () => {
+            const cellWithBomb = Cell.withBomb();
+            const cellWithoutBomb = Cell.withoutBomb();
+            const dugCell = Cell.withoutBomb().dig();
+            const columns = 3;
+            const cells = [cellWithBomb, ...Array(5).fill(cellWithoutBomb)];
+            const initialGrid = new Grid(columns, cells);
+
+            const dugGrid = initialGrid.sendActionToCell(2, 'dig');
+
+            const canceledGrid = dugGrid.cancelLastShot();
+
+            expect(canceledGrid).toEqual(initialGrid);
+        });
+    });
+
+    // Following tests are testing only implementations, and are here to help dev
     // TODO : change the methods to 'private' and delete those tests
     describe('getCellCoodinates', () => {
         test('on one cell grid', () => {
