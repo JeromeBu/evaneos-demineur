@@ -13,7 +13,7 @@ export const isVictorious = (grid: Grid) => {
     if (defeated) return false;
     const minedCells = cells.filter(cell => cell.hasMine);
     const untouchedCells = grid.cells.filter(
-        ({ status }) => status === 'untouched'
+        ({ status }) => status === 'untouched' || status === 'flagged'
     );
     return untouchedCells.length === minedCells.length;
 };
