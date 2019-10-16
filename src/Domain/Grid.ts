@@ -24,11 +24,11 @@ export class Grid {
         return this._score.value;
     }
 
-    static generate(row: number, column: number, minesCount: number): Grid {
+    static generate(row: number, column: number, bombsCount: number): Grid {
         const length = row * column;
         let cells: Cells = [];
         for (let i = 0; i < length; i++) {
-            const cell = minesCount > i ? Cell.withBomb() : Cell.withoutBomb();
+            const cell = bombsCount > i ? Cell.withBomb() : Cell.withoutBomb();
             cells.push(cell);
         }
 
@@ -64,7 +64,7 @@ export class Grid {
         this._cells = cells;
         this._previousGrid = previousGrid;
         this._score = score;
-        const cellsWithRepartition = this.calculateMineRepartition();
+        const cellsWithRepartition = this.calculateBombsRepartition();
         this._cells = cellsWithRepartition;
     }
 
@@ -123,7 +123,7 @@ export class Grid {
     }
 
     private isCellAndAroundEmpty = (cell: Cell) =>
-        !cell.dug && !cell.hasMine && cell.minesAround === 0;
+        !cell.dug && !cell.hasBomb && cell.bombsAround === 0;
 
     private breadthFirstSearch(
         intialCellIndex: number,
@@ -169,16 +169,16 @@ export class Grid {
         return this._cells;
     }
 
-    private calculateMineRepartition(): Cells {
+    private calculateBombsRepartition(): Cells {
         return this._cells.map((calculatedCell, cellIndex) => {
             const neighbourghCells: Cells = this.findCellsAround(cellIndex).map(
                 ({ cell }) => cell
             );
-            const numberOfMines = neighbourghCells.reduce(
-                (mines: number, cell) => (cell.hasMine ? mines + 1 : mines),
+            const numberOfBombs = neighbourghCells.reduce(
+                (bombs: number, cell) => (cell.hasBomb ? bombs + 1 : bombs),
                 0
             );
-            return calculatedCell.setMinesArounds(numberOfMines);
+            return calculatedCell.setBombsArounds(numberOfBombs);
         });
     }
 

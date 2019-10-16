@@ -55,7 +55,7 @@ describe(Grid, () => {
             });
         });
 
-        test('it create a grid without any mines', () => {
+        test('it create a grid without any bombs', () => {
             const grid = Grid.generate(row, column, 0);
             iterator.forEach((_, index) => {
                 const cell = grid.cellByIndex(index);
@@ -66,7 +66,7 @@ describe(Grid, () => {
             });
         });
 
-        test('it create a grid full of mines', () => {
+        test('it create a grid full of bombs', () => {
             const grid = Grid.generate(row, column, row * column);
             iterator.forEach((_, index) => {
                 const cell = grid.cellByIndex(index);
@@ -77,9 +77,9 @@ describe(Grid, () => {
             });
         });
 
-        test('it create a grid with 10 mines out of 100 cells', () => {
+        test('it create a grid with 10 bombs out of 100 cells', () => {
             const grid = Grid.generate(row, column, 10);
-            const mineCount = iterator.reduce((count, _, index) => {
+            const bombsCount = iterator.reduce((count, _, index) => {
                 const cell = grid.cellByIndex(index);
                 if (cell === undefined) return count;
 
@@ -87,13 +87,13 @@ describe(Grid, () => {
                 return dugCell.detonated === true ? count + 1 : count;
             }, 0);
 
-            expect(mineCount).toBe(10);
+            expect(bombsCount).toBe(10);
         });
     });
 
-    describe('dig all neighbours when there is no mines around', () => {
+    describe('dig all neighbours when there is no bombs around', () => {
         describe('dug cell has bomb', () => {
-            test('does not dig mines around', () => {
+            test('does not dig bombs around', () => {
                 const cellWithBomb = Cell.withBomb();
                 const cellWithoutBomb = Cell.withoutBomb();
                 const columns = 2;
@@ -103,13 +103,13 @@ describe(Grid, () => {
                 const grid = initialGrid.sendActionToCell(0, 'dig');
                 expect(grid.cellByIndex(0)).toEqual(cellWithBomb.dig());
                 const lastCell = checkNotNull(grid.cellByIndex(1));
-                expect(ignoreMinesAroundValue(lastCell)).toEqual(
+                expect(ignoreBombsAroundValue(lastCell)).toEqual(
                     cellWithoutBomb
                 );
             });
         });
-        describe('dug cell has a mine around', () => {
-            test('does not dig mines around', () => {
+        describe('dug cell has a bomb around', () => {
+            test('does not dig bombs around', () => {
                 const cellWithBomb = Cell.withBomb();
                 const cellWithoutBomb = Cell.withoutBomb();
                 const columns = 2;
@@ -122,8 +122,8 @@ describe(Grid, () => {
                 expect(lastCell).toEqual(new Cell(false, false, true, 1));
             });
         });
-        describe('dug cell with no mine around', () => {
-            test('all mines around should be dug', () => {
+        describe('dug cell with no bomb around', () => {
+            test('all bombs around should be dug', () => {
                 const cellWithBomb = Cell.withBomb();
                 const cellWithoutBomb = Cell.withoutBomb();
                 const columns = 5;
@@ -275,12 +275,12 @@ describe(Grid, () => {
         ) => {
             expect(
                 gird.findCellsAround(cellIndex).map(({ cell }) => {
-                    return ignoreMinesAroundValue(cell);
+                    return ignoreBombsAroundValue(cell);
                 })
             ).toEqual(expectedCells);
         };
     });
-    const ignoreMinesAroundValue = ({ hasMine, flagged, dug }: Cell): Cell => {
-        return new Cell(hasMine, flagged, dug);
+    const ignoreBombsAroundValue = ({ hasBomb, flagged, dug }: Cell): Cell => {
+        return new Cell(hasBomb, flagged, dug);
     };
 });

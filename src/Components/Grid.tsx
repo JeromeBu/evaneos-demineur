@@ -55,7 +55,7 @@ export const Grid: React.FunctionComponent = () => {
                         key={index}
                         isDark={isDark(index)}
                         status={cell.status}
-                        minesAround={cell.minesAround}
+                        bombsAround={cell.bombsAround}
                         onclick={(ev: MouseEvent) =>
                             handleClick(index, ev.button)
                         }

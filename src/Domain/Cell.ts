@@ -5,7 +5,7 @@ export class Cell {
     private _bomb: boolean;
     private _flagged: boolean;
     private _dug: boolean;
-    private _minesAround: number;
+    private _bombsAround: number;
 
     static withBomb(): Cell {
         return new Cell(true, false, false);
@@ -19,12 +19,12 @@ export class Cell {
         withBomb: boolean,
         flagged: boolean,
         dug: boolean,
-        minesAround: number = 0
+        bombsAround: number = 0
     ) {
         this._bomb = withBomb;
         this._flagged = flagged;
         this._dug = dug;
-        this._minesAround = minesAround;
+        this._bombsAround = bombsAround;
     }
 
     flag(): Cell {
@@ -63,20 +63,20 @@ export class Cell {
         return 'untouched';
     }
 
-    get hasMine() {
+    get hasBomb() {
         return this._bomb;
     }
 
-    get minesAround(): number {
-        return this._minesAround;
+    get bombsAround(): number {
+        return this._bombsAround;
     }
 
-    setMinesArounds(numberOfMinesAround: number) {
+    setBombsArounds(numberOfBombsAround: number) {
         return new Cell(
             this._bomb,
             this._flagged,
             this._dug,
-            numberOfMinesAround
+            numberOfBombsAround
         );
     }
 }
