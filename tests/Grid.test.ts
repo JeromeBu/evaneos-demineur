@@ -191,7 +191,6 @@ describe(Grid, () => {
         test('gets back to previous grid when canceling shot', () => {
             const cellWithBomb = Cell.withBomb();
             const cellWithoutBomb = Cell.withoutBomb();
-            const dugCell = Cell.withoutBomb().dig();
             const columns = 3;
             const cells = [cellWithBomb, ...Array(5).fill(cellWithoutBomb)];
             const score = new Score(cells.length);
@@ -205,81 +204,6 @@ describe(Grid, () => {
         });
     });
 
-    // Following tests are testing only implementations, and are here to help dev
-    // TODO : change the methods to 'private' and delete those tests
-    describe('getCellCoodinates', () => {
-        test('on one cell grid', () => {
-            const cellWithoutBomb = Cell.withoutBomb();
-            const columns = 1;
-            const cells = [cellWithoutBomb];
-            const score = new Score(cells.length);
-            const grid = new Grid(columns, cells, score);
-            expectCellCoordinates(grid, 0, { x: 0, y: 0 });
-        });
-
-        test('on 4x4 grid', () => {
-            const cell = Cell.withoutBomb();
-            const columns = 4;
-            const cells = Array(16).fill(cell);
-            const score = new Score(cells.length);
-            const grid = new Grid(columns, cells, score);
-            expectCellCoordinates(grid, 0, { x: 0, y: 0 });
-            expectCellCoordinates(grid, 1, { x: 1, y: 0 });
-            expectCellCoordinates(grid, 2, { x: 2, y: 0 });
-            expectCellCoordinates(grid, 3, { x: 3, y: 0 });
-            expectCellCoordinates(grid, 4, { x: 0, y: 1 });
-            expectCellCoordinates(grid, 7, { x: 3, y: 1 });
-            expectCellCoordinates(grid, 15, { x: 3, y: 3 });
-        });
-
-        const expectCellCoordinates = (
-            gird: Grid,
-            cellIndex: number,
-            expectedCoordinates: Coord
-        ) => {
-            expect(gird.getCellCoodinates(cellIndex)).toEqual(
-                expectedCoordinates
-            );
-        };
-    });
-    describe('findCellsAround', () => {
-        test('on one cell grid', () => {
-            const cellWithoutBomb = Cell.withoutBomb();
-            const columns = 1;
-            const cells = [cellWithoutBomb];
-            const score = new Score(cells.length);
-            const grid = new Grid(columns, cells, score);
-            expectCellsAround(grid, 0, []);
-        });
-        test('on 3x2 grid', () => {
-            const cell0 = Cell.withoutBomb();
-            const cell1 = Cell.withBomb();
-            const cell2 = Cell.withoutBomb();
-            const cell3 = Cell.withoutBomb();
-            const cell4 = Cell.withBomb();
-            const cell5 = Cell.withoutBomb();
-            const columns = 3;
-            const cells = [cell0, cell1, cell2, cell3, cell4, cell5];
-            const score = new Score(cells.length);
-            const grid = new Grid(columns, cells, score);
-            expectCellsAround(grid, 0, [cell1, cell4, cell3]);
-            expectCellsAround(grid, 1, [cell2, cell5, cell4, cell3, cell0]);
-            expectCellsAround(grid, 4, [cell0, cell1, cell2, cell5, cell3]);
-            expectCellsAround(grid, 5, [cell1, cell2, cell4]);
-        });
-
-        const expectCellsAround = (
-            gird: Grid,
-            cellIndex: number,
-            expectedCells: Cells
-        ) => {
-            expect(
-                gird.findCellsAround(cellIndex).map(({ cell }) => {
-                    return ignoreBombsAroundValue(cell);
-                })
-            ).toEqual(expectedCells);
-        };
-    });
     const ignoreBombsAroundValue = ({ hasBomb, flagged, dug }: Cell): Cell => {
         return new Cell(hasBomb, flagged, dug);
     };

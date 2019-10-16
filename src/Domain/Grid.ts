@@ -182,7 +182,7 @@ export class Grid {
         });
     }
 
-    findCellsAround(cellIndex: number): CellWithIndex[] {
+    private findCellsAround(cellIndex: number): CellWithIndex[] {
         const { x, y } = this.getCellCoodinates(cellIndex);
 
         // circle aroound cell clockwise starting at x - 1 , y - 1
@@ -214,7 +214,7 @@ export class Grid {
         return test !== undefined;
     };
 
-    getCellCoodinates(cellIndex: number): Coord {
+    private getCellCoodinates(cellIndex: number): Coord {
         return {
             x: cellIndex % this._column,
             y: Math.floor(cellIndex / this._column),
