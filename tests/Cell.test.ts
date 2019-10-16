@@ -31,7 +31,7 @@ describe(Cell, () => {
                     dugCell.flag();
                 }).toThrowError();
             });
-            test('minesArround shows the right amount of neighbour mines', () => {
+            test('bombsArround shows the right amount of neighbour bombs', () => {
                 const cellWithout = Cell.withoutBomb();
                 const cellWithBomb = Cell.withBomb();
                 const cells = [
@@ -51,13 +51,13 @@ describe(Cell, () => {
                 //     x 0 0
                 //     0 0 0
                 //     0 x x
-                expect(grid.cells[0].minesAround).toBe(0);
-                expect(grid.cells[1].minesAround).toBe(1);
-                expect(grid.cells[2].minesAround).toBe(0);
-                expect(grid.cells[3].minesAround).toBe(2);
-                expect(grid.cells[4].minesAround).toBe(3);
-                expect(grid.cells[5].minesAround).toBe(2);
-                expect(grid.cells[8].minesAround).toBe(1);
+                expect(grid.cells[0].bombsAround).toBe(0);
+                expect(grid.cells[1].bombsAround).toBe(1);
+                expect(grid.cells[2].bombsAround).toBe(0);
+                expect(grid.cells[3].bombsAround).toBe(2);
+                expect(grid.cells[4].bombsAround).toBe(3);
+                expect(grid.cells[5].bombsAround).toBe(2);
+                expect(grid.cells[8].bombsAround).toBe(1);
             });
         });
     });

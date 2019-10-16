@@ -1,3 +1,8 @@
+export type Trigger = (callback: () => void) => any;
+
+const triggersEachSecond: Trigger = (callback: () => void) =>
+    setInterval(callback, 1000);
+
 export class Score {
     private _value: number;
 
@@ -5,11 +10,11 @@ export class Score {
         return this._value;
     }
 
-    constructor(initialValue: number) {
+    constructor(initialValue: number, trigger: Trigger = triggersEachSecond) {
         this._value = initialValue;
-        setInterval(() => {
+        trigger(() => {
             this.removePoints(0.2);
-        }, 1000);
+        });
     }
 
     flagUsed() {

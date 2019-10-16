@@ -11,9 +11,9 @@ export const isVictorious = (grid: Grid) => {
     const { cells } = grid;
     const defeated = isDefeated(grid);
     if (defeated) return false;
-    const minedCells = cells.filter(cell => cell.hasMine);
+    const bombedCells = cells.filter(cell => cell.hasBomb);
     const untouchedCells = grid.cells.filter(
         ({ status }) => status === 'untouched' || status === 'flagged'
     );
-    return untouchedCells.length === minedCells.length;
+    return untouchedCells.length === bombedCells.length;
 };

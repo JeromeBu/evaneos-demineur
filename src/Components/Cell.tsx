@@ -3,7 +3,7 @@ import { CellStatus } from '../Domain/Cell';
 
 type CellProps = {
     status: CellStatus;
-    minesAround: number;
+    bombsAround: number;
     onclick: Function;
     isDark: boolean;
 };
@@ -45,7 +45,7 @@ const cellStyle = (
 };
 
 export const Cell: React.FC<CellProps> = ({
-    minesAround,
+    bombsAround,
     onclick,
     status,
     isDark,
@@ -61,8 +61,8 @@ export const Cell: React.FC<CellProps> = ({
         }}
         style={cellStyle(status, isDark)}
     >
-        {status === 'dug' && minesAround > 0
-            ? minesAround.toString()
+        {status === 'dug' && bombsAround > 0
+            ? bombsAround.toString()
             : emojis[status]}
     </div>
 );
